@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tesla vs Gas: Ahorro Real</title>
+    <title>Tesla vs Gas: Eficiencia Visual</title>
     <style>
         :root {
             --bg: #0d0f12;
@@ -11,6 +11,8 @@
             --tesla-blue: #3e64ff;
             --tesla-cyan: #00d2ff;
             --tesla-green: #00ff88;
+            --tesla-yellow: #ffcc00;
+            --tesla-red: #ff453a;
             --text-dim: #8b949e;
         }
 
@@ -54,12 +56,13 @@
         .perf-badge {
             display: inline-block;
             margin-top: 10px;
-            padding: 6px 12px;
+            padding: 6px 14px;
             background: rgba(255,255,255,0.05);
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 16px;
             font-weight: 800;
-            color: var(--tesla-green);
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
         }
 
         .cost-label {
@@ -104,16 +107,16 @@
 
         /* --- CUADRO DE ÉNFASIS (AHORRO TOTAL) --- */
         .total-box {
-            background: linear-gradient(180deg, rgba(62,100,255,0.15) 0%, rgba(0,255,136,0.05) 100%);
+            background: linear-gradient(180deg, rgba(62,100,255,0.1) 0%, rgba(0,255,136,0.05) 100%);
             border-radius: 28px;
             padding: 30px;
             text-align: center;
-            border: 1px solid rgba(0,255,136,0.3);
+            border: 1px solid rgba(0,255,136,0.2);
             box-shadow: 0 10px 40px rgba(0,0,0,0.4);
         }
 
         .total-label { font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
-        .total-val { font-size: 48px; font-weight: 800; color: var(--tesla-green); margin: 10px 0; text-shadow: 0 0 20px rgba(0,255,136,0.4); }
+        .total-val { font-size: 48px; font-weight: 800; color: var(--tesla-green); margin: 10px 0; }
         .total-desc { font-size: 13px; color: var(--text-dim); }
     </style>
 </head>
@@ -121,8 +124,8 @@
 
 <div class="container">
     <header>
-        <h1>Ahorro por Sesión</h1>
-        <div class="subtitle">Equivalencia financiera en tiempo real</div>
+        <h1>Comparativa Pro</h1>
+        <div class="subtitle">Análisis de eficiencia monetaria</div>
     </header>
 
     <div class="comparison-card">
@@ -143,7 +146,7 @@
 
     <div class="input-group">
         <div class="control">
-            <div class="label-row">Distancia del Recorrido <b id="distText">100 Mi</b></div>
+            <div class="label-row">Distancia <b id="distText">100 Mi</b></div>
             <input type="range" id="dist" min="1" max="1000" step="1" value="100" oninput="calc()">
         </div>
         <div class="control">
@@ -172,11 +175,26 @@
     <div class="total-box">
         <div class="total-label">Dinero Ahorrado</div>
         <div class="total-val" id="totalSavings">$0.00</div>
-        <div class="total-desc" id="explanation">En este viaje de 100 millas</div>
+        <div class="total-desc" id="explanation">En este trayecto</div>
     </div>
 </div>
 
 <script>
+    function getBadgeStyle(mpg) {
+        if (mpg >= 50) return { color: 'var(--tesla-green)', bg: 'rgba(0, 255, 136, 0.15)', border: 'rgba(0, 255, 136, 0.3)' };
+        if (mpg >= 25) return { color: 'var(--tesla-yellow)', bg: 'rgba(255, 204, 0, 0.15)', border: 'rgba(255, 204, 0, 0.3)' };
+        return { color: 'var(--tesla-red)', bg: 'rgba(255, 69, 58, 0.15)', border: 'rgba(255, 69, 58, 0.3)' };
+    }
+
+    function updateBadge(id, mpg) {
+        const badge = document.getElementById(id);
+        const style = getBadgeStyle(mpg);
+        badge.innerText = `${Math.round(mpg)} MPG`;
+        badge.style.color = style.color;
+        badge.style.backgroundColor = style.bg;
+        badge.style.borderColor = style.border;
+    }
+
     function calc() {
         const dist = parseFloat(document.getElementById('dist').value);
         const pG = parseFloat(document.getElementById('gP').value) || 0;
@@ -184,39 +202,26 @@
         const pE = parseFloat(document.getElementById('eP').value) || 0;
         const eE = parseFloat(document.getElementById('eE').value) || 1;
 
-        // 1. Costos por milla
         const costEV = eE * pE;
         const costGas = pG / mG;
-
-        // 2. Equivalencia MPG para el Tesla
         const eqMPG = pG / costEV;
-
-        // 3. Ahorro Total según la distancia
         const savings = (costGas - costEV) * dist;
 
-        // Actualizar UI
-        document.getElementById('distText').innerText = `${dist.toLocaleString()} Mi`;
+        // Actualizar Textos
+        document.getElementById('distText').innerText = `${dist} Mi`;
         document.getElementById('gPText').innerText = `$${pG.toFixed(2)}`;
         document.getElementById('gMText').innerText = `${mG} MPG`;
-        
         document.getElementById('evMilla').innerText = `$${costEV.toFixed(3)} /mi`;
         document.getElementById('gasMilla').innerText = `$${costGas.toFixed(3)} /mi`;
-        
-        document.getElementById('gasMPGDisplay').innerText = `${mG} MPG`;
-        document.getElementById('teslaEq').innerText = `${Math.round(eqMPG)} MPG`;
 
+        // Actualizar Badges con Rangos de Colores
+        updateBadge('gasMPGDisplay', mG);
+        updateBadge('teslaEq', eqMPG);
+
+        // Ahorro Total
         document.getElementById('totalSavings').innerText = `$${Math.abs(savings).toFixed(2)}`;
         document.getElementById('explanation').innerText = `Diferencia en un viaje de ${dist} millas`;
-
-        // Color según quién ahorra
-        const totalBox = document.querySelector('.total-box');
-        if (savings > 0) {
-            document.getElementById('totalSavings').style.color = 'var(--tesla-green)';
-            totalBox.style.border = '1px solid rgba(0,255,136,0.3)';
-        } else {
-            document.getElementById('totalSavings').style.color = '#ff453a';
-            totalBox.style.border = '1px solid rgba(255,69,58,0.3)';
-        }
+        document.getElementById('totalSavings').style.color = savings >= 0 ? 'var(--tesla-green)' : 'var(--tesla-red)';
     }
     window.onload = calc;
 </script>
