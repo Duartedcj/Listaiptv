@@ -29,7 +29,7 @@
         h1 { font-size: 22px; font-weight: 700; margin: 0; letter-spacing: 0.5px; }
         .subtitle { color: #8b949e; font-size: 13px; margin-top: 5px; }
 
-        /* --- SECCIÓN DE VEHÍCULOS (EL DISEÑO QUE QUIERES) --- */
+        /* --- SECCIÓN DE VEHÍCULOS --- */
         .vehicle-card {
             background: linear-gradient(145deg, #1e2530, #161b22);
             border-radius: 24px;
@@ -49,11 +49,14 @@
 
         .v-item { text-align: center; flex: 1; z-index: 2; }
         
-        /* Imagen del Tesla con brillo neón */
+        /* Efecto Glow mejorado para tu Tesla */
         .v-item img { 
-            width: 110px; 
-            filter: drop-shadow(0 0 15px rgba(62,100,255,0.4));
+            width: 120px; 
+            height: auto;
+            filter: drop-shadow(0 0 12px rgba(62,100,255,0.6)); /* Resplandor azul */
             transition: transform 0.3s ease;
+            display: block;
+            margin: 0 auto;
         }
 
         .vs-text {
@@ -90,7 +93,7 @@
         .box { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 12px; border: 1px solid rgba(255,255,255,0.05); }
         .box input { background: transparent; border: none; color: white; font-size: 16px; font-weight: 700; width: 100%; outline: none; }
 
-        /* --- CAJA DE RESULTADO (GLOW) --- */
+        /* --- CAJA DE RESULTADO --- */
         .result-box {
             background: linear-gradient(180deg, rgba(62,100,255,0.1) 0%, rgba(0,255,136,0.05) 100%);
             border-radius: 28px;
@@ -118,12 +121,12 @@
     <div class="vehicle-card">
         <div class="vehicle-display">
             <div class="v-item">
-                <img src="Teslam3.AVIF" alt="Tesla">
+                <img src="Teslam3.AVIF" alt="Tesla Model 3">
                 <div class="v-label">Tesla Model 3</div>
             </div>
             <div class="vs-text">VS</div>
             <div class="v-item">
-                <img src="Gascar.png" alt="Gas Car" style="filter: grayscale(0.5) brightness(0.8);">
+                <img src="Gascar.png" alt="Gas Car" style="filter: grayscale(0.5) brightness(0.8) drop-shadow(0 0 5px rgba(255,255,255,0.1));">
                 <div class="v-label">Gas Vehicle</div>
             </div>
         </div>
