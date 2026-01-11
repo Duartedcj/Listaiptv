@@ -3,134 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tesla Savings Calculator</title>
+    <title>Tesla Savings Pro</title>
     <style>
         :root {
             --bg: #0d1117;
-            --card: #161b22;
-            --tesla-blue: #58a6ff;
+            --card: #1c2128;
+            --tesla-blue: #3e64ff;
             --tesla-green: #00ff88;
-            --tesla-yellow: #d29922;
-            --tesla-red: #f85149;
+            --tesla-yellow: #ffcc00;
+            --tesla-red: #ff453a;
             --text-dim: #8b949e;
         }
 
-        /* Animación de resplandor para el ahorro */
-        @keyframes neon-glow {
-            0% { text-shadow: 0 0 10px rgba(0,255,136,0.2), 0 0 20px rgba(0,255,136,0.1); }
-            50% { text-shadow: 0 0 20px rgba(0,255,136,0.6), 0 0 30px rgba(0,255,136,0.4); }
-            100% { text-shadow: 0 0 10px rgba(0,255,136,0.2), 0 0 20px rgba(0,255,136,0.1); }
+        @keyframes glow {
+            0% { text-shadow: 0 0 10px rgba(0,255,136,0.2); }
+            50% { text-shadow: 0 0 25px rgba(0,255,136,0.5); }
+            100% { text-shadow: 0 0 10px rgba(0,255,136,0.2); }
         }
 
         body {
             background-color: var(--bg);
             color: white;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
             margin: 0;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            align-items: center;
             padding: 20px;
         }
 
         .container { width: 100%; max-width: 380px; }
 
-        header { text-align: center; margin-bottom: 25px; }
-        h1 { font-size: 24px; font-weight: 600; margin: 0; }
-        .subtitle { color: var(--text-dim); font-size: 14px; margin-top: 4px; }
+        header { text-align: center; margin-bottom: 20px; }
+        h1 { font-size: 22px; font-weight: 700; margin: 0; }
+        .subtitle { color: var(--text-dim); font-size: 13px; margin-top: 5px; }
 
-        /* --- SECCIÓN COMPARATIVA --- */
+        /* --- COMPARATIVA --- */
         .comparison-card {
             background: var(--card);
-            border-radius: 24px;
-            padding: 20px;
+            border-radius: 28px;
+            padding: 25px;
             margin-bottom: 16px;
             border: 1px solid rgba(255,255,255,0.05);
         }
 
         .vehicle-grid {
             display: grid;
-            grid-template-columns: 1fr 40px 1fr;
+            grid-template-columns: 1fr 30px 1fr;
             align-items: center;
             text-align: center;
         }
 
-        .v-item { display: flex; flex-direction: column; align-items: center; }
-        
-        .v-item img { 
-            width: 100%; height: 70px; object-fit: contain; margin-bottom: 15px; 
-        }
-
+        .v-item img { width: 100%; height: 75px; object-fit: contain; margin-bottom: 12px; }
         .perf-badge {
-            padding: 10px 0;
-            width: 110px;
-            border-radius: 12px;
-            font-size: 18px;
-            font-weight: 700;
-            background: rgba(255,255,255,0.05);
-            margin-bottom: 8px;
-            transition: all 0.4s ease;
+            padding: 10px 0; width: 110px; border-radius: 12px;
+            font-size: 18px; font-weight: 800; background: rgba(255,255,255,0.05);
+            margin: 0 auto 8px auto; transition: all 0.4s ease;
         }
+        .cost-mi { font-size: 11px; color: var(--text-dim); text-transform: uppercase; }
 
-        .cost-mi { font-size: 12px; color: var(--text-dim); letter-spacing: 0.5px; }
-        .vs-text { color: var(--tesla-blue); font-weight: 800; font-size: 14px; }
-
-        /* --- SECCIÓN CONTROLES --- */
-        .controls-card {
-            background: var(--card);
-            border-radius: 24px;
-            padding: 20px;
-            margin-bottom: 16px;
-        }
-
-        .control-group { margin-bottom: 22px; }
-        .control-group:last-child { margin-bottom: 0; }
-
-        .label-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .label-row span { font-size: 11px; color: var(--text-dim); text-transform: uppercase; font-weight: 600; }
-        .label-row b { 
-            font-size: 13px; background: #30363d; padding: 4px 10px; border-radius: 8px; 
-        }
+        /* --- CONTROLES --- */
+        .input-group { background: var(--card); border-radius: 24px; padding: 22px; margin-bottom: 15px; }
+        .control { margin-bottom: 20px; }
+        .label-row { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-dim); margin-bottom: 10px; text-transform: uppercase; }
+        .label-row b { color: white; font-size: 14px; background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 6px; }
 
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
-        input[type=range]::-webkit-slider-runnable-track { height: 4px; background: #30363d; border-radius: 2px; }
+        input[type=range]::-webkit-slider-runnable-track { height: 4px; background: #333; border-radius: 2px; }
         input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none; height: 20px; width: 20px; border-radius: 50%;
-            background: #58a6ff; border: 3px solid white; margin-top: -8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            -webkit-appearance: none; height: 22px; width: 22px; border-radius: 50%;
+            background: var(--tesla-blue); border: 2px solid white; margin-top: -9px;
         }
 
-        /* --- SECCIÓN AHORRO (ESTILO IMAGEN) --- */
-        .savings-card {
-            background: #0d1117;
-            border: 1px solid rgba(0, 255, 136, 0.2);
-            border-radius: 30px;
+        /* --- CUADRO DE AHORRO (RESTALRADO) --- */
+        .total-box {
+            background: linear-gradient(180deg, #1c2128 0%, #161b22 100%);
+            border-radius: 32px;
             padding: 35px 20px;
             text-align: center;
-            position: relative;
-            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
         }
 
-        .savings-card::after {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: radial-gradient(circle at center, rgba(0,255,136,0.05) 0%, transparent 70%);
-            pointer-events: none;
-        }
+        .total-label { font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; }
+        .total-val { font-size: 58px; font-weight: 800; margin: 10px 0; color: var(--tesla-green); }
+        .saving-glow { animation: glow 3s infinite ease-in-out; }
+        .total-desc { font-size: 11px; color: var(--text-dim); opacity: 0.7; }
 
-        .savings-label { font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
-        
-        .savings-value { 
-            font-size: 58px; font-weight: 800; margin: 5px 0; 
-            color: var(--tesla-green);
-            animation: neon-glow 3s infinite ease-in-out;
+        .footer-link {
+            margin-top: 20px; font-size: 12px; color: var(--text-dim);
+            background: rgba(255,255,255,0.05); padding: 6px 15px; border-radius: 20px;
+            text-decoration: none; border: 1px solid rgba(255,255,255,0.1);
         }
-
-        .savings-footer { font-size: 11px; color: var(--text-dim); margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -144,63 +108,58 @@
     <div class="comparison-card">
         <div class="vehicle-grid">
             <div class="v-item">
-                <img src="Teslam3.AVIF" alt="Tesla">
-                <div class="perf-badge" id="teslaMPG">0 MPG</div>
-                <div class="cost-mi" id="teslaCost">$0.000 /MI</div>
+                <img src="Teslam3.AVIF">
+                <div class="perf-badge" id="tMPG">0 MPG</div>
+                <div class="cost-mi" id="tCost">$0.000 /MI</div>
             </div>
-            <div class="vs-text">VS</div>
+            <div style="color:var(--tesla-blue); font-weight:800; font-size:14px;">VS</div>
             <div class="v-item">
-                <img src="Gascar.png" alt="Gas Car">
-                <div class="perf-badge" id="gasMPGDisplay">0 MPG</div>
-                <div class="cost-mi" id="gasCost">$0.000 /MI</div>
+                <img src="Gascar.png">
+                <div class="perf-badge" id="gMPGDisplay">0 MPG</div>
+                <div class="cost-mi" id="gCost">$0.000 /MI</div>
             </div>
         </div>
     </div>
 
-    <div class="controls-card">
-        <div class="control-group">
-            <div class="label-row"><span>Distancia</span> <b id="valDist">134 Mi</b></div>
+    <div class="input-group">
+        <div class="control">
+            <div class="label-row">Distancia <b id="dText">134 Mi</b></div>
             <input type="range" id="dist" min="1" max="300" value="134" oninput="calc()">
         </div>
-        <div class="control-group">
-            <div class="label-row"><span>Precio Gasolina</span> <b id="valGasP">$2.51</b></div>
+        <div class="control">
+            <div class="label-row">Precio Gasolina <b id="gpText">$2.51</b></div>
             <input type="range" id="gasP" min="1" max="4" step="0.01" value="2.51" oninput="calc()">
         </div>
-        <div class="control-group">
-            <div class="label-row"><span>Eficiencia Tesla</span> <b id="valEff">0.235 kWh/mi</b></div>
+        <div class="control">
+            <div class="label-row">Eficiencia Tesla <b id="effText">0.235 kWh/mi</b></div>
             <input type="range" id="eff" min="0.150" max="0.500" step="0.001" value="0.235" oninput="calc()">
         </div>
-        <div class="control-group">
-            <div class="label-row"><span>MPG Auto Gas</span> <b id="valGasMPG">30 MPG</b></div>
-            <input type="range" id="gasMPG" min="10" max="60" value="30" oninput="calc()">
+        <div class="control">
+            <div class="label-row">MPG Auto Gas <b id="gmText">30 MPG</b></div>
+            <input type="range" id="gasM" min="10" max="60" value="30" oninput="calc()">
         </div>
-        <div class="control-group">
-            <div class="label-row"><span>Costo kWh</span> <b id="valKwh">$0.34</b></div>
-            <input type="range" id="kwh" min="0.10" max="0.50" step="0.01" value="0.34" oninput="calc()">
+        <div class="control">
+            <div class="label-row">Costo kWh <b id="kwhText">$0.34</b></div>
+            <input type="range" id="kwhS" min="0.10" max="0.50" step="0.01" value="0.34" oninput="calc()">
         </div>
     </div>
 
-    <div class="savings-card">
-        <div class="savings-label">Ahorro Estimado</div>
-        <div class="savings-value" id="totalSavings">$0.00</div>
-        <div class="savings-footer">Basado en eficiencia energética actual</div>
+    <div class="total-box" id="resBox">
+        <div class="total-label" id="statLabel">Ahorro Estimado</div>
+        <div class="total-val" id="savingsVal">$0.00</div>
+        <div class="total-desc">Basado en eficiencia energética actual</div>
     </div>
 </div>
+
+<a href="https://duartedcj.github.io" class="footer-link">duartedcj.github.io</a>
 
 <script>
     function updateBadge(id, val, isTesla) {
         const el = document.getElementById(id);
         el.innerText = Math.round(val) + " MPG";
-        
-        let color, bg, border;
-        if (isTesla) {
-            if (val >= 33) color = '#00ff88'; else if (val >= 28) color = '#d29922'; else color = '#f85149';
-        } else {
-            if (val >= 28) color = '#00ff88'; else if (val >= 24) color = '#d29922'; else color = '#f85149';
-        }
-        
+        let color = val >= (isTesla ? 33 : 28) ? 'var(--tesla-green)' : (val >= (isTesla ? 28 : 24) ? 'var(--tesla-yellow)' : 'var(--tesla-red)');
         el.style.color = color;
-        el.style.backgroundColor = color + '15'; // 15 es opacidad hex
+        el.style.backgroundColor = color + '20';
         el.style.border = '1px solid ' + color + '40';
     }
 
@@ -208,36 +167,33 @@
         const d = parseFloat(document.getElementById('dist').value);
         const gp = parseFloat(document.getElementById('gasP').value);
         const eff = parseFloat(document.getElementById('eff').value);
-        const gmpg = parseFloat(document.getElementById('gasMPG').value);
-        const kwh = parseFloat(document.getElementById('kwh').value);
+        const gm = parseFloat(document.getElementById('gasM').value);
+        const kwh = parseFloat(document.getElementById('kwhS').value);
 
-        // Labels
-        document.getElementById('valDist').innerText = d + " Mi";
-        document.getElementById('valGasP').innerText = "$" + gp.toFixed(2);
-        document.getElementById('valEff').innerText = eff.toFixed(3) + " kWh/mi";
-        document.getElementById('valGasMPG').innerText = gmpg + " MPG";
-        document.getElementById('valKwh').innerText = "$" + kwh.toFixed(2);
+        document.getElementById('dText').innerText = d + " Mi";
+        document.getElementById('gpText').innerText = "$" + gp.toFixed(2);
+        document.getElementById('effText').innerText = eff.toFixed(3) + " kWh/mi";
+        document.getElementById('gmText').innerText = gm + " MPG";
+        document.getElementById('kwhText').innerText = "$" + kwh.toFixed(2);
 
-        // Cálculos por milla
-        const costEV = eff * kwh;
-        const costGas = gp / gmpg;
-        const eqMPG = gp / costEV;
-        const savings = (costGas - costEV) * d;
+        const cEV = eff * kwh;
+        const cGas = gp / gm;
+        const eq = gp / cEV;
+        const s = (cGas - cEV) * d;
 
-        // UI Inferior
-        document.getElementById('teslaCost').innerText = "$" + costEV.toFixed(3) + " /MI";
-        document.getElementById('gasCost').innerText = "$" + costGas.toFixed(3) + " /MI";
+        document.getElementById('tCost').innerText = "$" + cEV.toFixed(3) + " /MI";
+        document.getElementById('gCost').innerText = "$" + cGas.toFixed(3) + " /MI";
         
-        updateBadge('teslaMPG', eqMPG, true);
-        updateBadge('gasMPGDisplay', gmpg, false);
+        updateBadge('tMPG', eq, true);
+        updateBadge('gMPGDisplay', gm, false);
 
-        const savEl = document.getElementById('totalSavings');
-        savEl.innerText = (savings >= 0 ? "$" : "-$") + Math.abs(savings).toFixed(2);
-        savEl.style.color = savings >= 0 ? "var(--tesla-green)" : "var(--tesla-red)";
-        
-        document.querySelector('.savings-card').style.borderColor = savings >= 0 ? "rgba(0, 255, 136, 0.2)" : "rgba(248, 81, 73, 0.2)";
+        const v = document.getElementById('savingsVal');
+        const box = document.getElementById('resBox');
+        v.innerText = (s >= 0 ? "$" : "-$") + Math.abs(s).toFixed(2);
+        v.style.color = s >= 0 ? 'var(--tesla-green)' : 'var(--tesla-red)';
+        if(s >= 0) v.classList.add('saving-glow'); else v.classList.remove('saving-glow');
+        box.style.borderColor = s >= 0 ? 'rgba(0,255,136,0.2)' : 'rgba(255,69,58,0.2)';
     }
-
     window.onload = calc;
 </script>
 
