@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fuel-to-EV Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3e64ff;
+            --accent: #00d2ff;
+            --bg: #0f1218;
+            --card: #1c222d;
+            --text: #ffffff;
+            --success: #00ff88;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animación de fondo */
+        body::before {
+            content: "";
+            position: absolute;
+            width: 300px; height: 300px;
+            background: var(--primary);
+            filter: blur(150px);
+            border-radius: 50%;
+            z-index: -1;
+            top: 10%; left: 10%;
+            animation: move 10s infinite alternate;
+        }
+
+        @keyframes move {
+            from { transform: translate(0, 0); }
+            to { transform: translate(100px, 50px); }
+        }
+
+        .card {
+            background: rgba(28, 34, 45, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 380px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-weight: 600;
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+            text-align: center;
+            background: linear-gradient(to right, #fff, #888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.subtitle {
+            text-align: center;
+            color: #888;
+            font-size: 0.8rem;
+            margin-bottom: 25px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #aaa;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px 15px;
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 15px rgba(62, 100, 255, 0.3);
+        }
+
+        .result-container {
+            background: linear-gradient(135deg, rgba(62, 100, 255, 0.1), rgba(0, 210, 255, 0.1));
+            padding: 20px;
+            border-radius: 18px;
+            text-align: center;
+            margin-top: 10px;
+            border: 1px solid rgba(62, 100, 255, 0.2);
+        }
+
+        .result-val {
+            font-size: 2.5rem;
+            font-weight: 600;
+            display: block;
+            color: var(--success);
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .savings-badge {
+            display: inline-block;
+            background: var(--success);
+            color: #000;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-top: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .footer-info {
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: #666;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>Energy Calc</h1>
+    <p class="subtitle">Equivalencia Tesla vs Rogue</p>
+    
+    <div class="input-group">
+        <label>Precio Gasolina (GAL)</label>
+        <input type="number" id="gasPrice" value="2.81" step="0.01" oninput="update()">
+    </div>
+
+    <div class="input-group">
+        <label>Costo Supercharger (kWh)</label>
+        <input type="number" id="kwhPrice" value="0.34" step="0.01" oninput="update()">
+    </div>
+
+    <div class="input-group">
+        <label>Eficiencia Tesla (kWh/mi)</label>
+        <input type="number" id="teslaCons" value="0.250" step="0.001" oninput="update()">
+    </div>
+
+    <div class="result-container">
+        <span style="font-size: 0.8rem; color: #aaa;">EQUIVALENCIA ECONÓMICA</span>
+        <span class="result-val" id="mpgResult">33.0</span>
+        <span style="font-size: 0.9rem; font-weight: 600;">MPG</span>
+        <div id="badge" class="savings-badge">10% MEJOR QUE ROGUE</div>
+    </div>
+
+    <div class="footer-info">
+        Basado en el rendimiento de tu Rogue (30 MPG)
+    </div>
+</div>
+
+<script>
+    function update() {
+        const gas = parseFloat(document.getElementById('gasPrice').value) || 0;
+        const kwh = parseFloat(document.getElementById('kwhPrice').value) || 0;
+        const cons = parseFloat(document.getElementById('teslaCons').value) || 0;
+        const rogueMPG = 30;
+
+        const mpgEquiv = gas / (cons * kwh);
+        const display = document.getElementById('mpgResult');
+        const badge = document.getElementById('badge');
+
+        if (isFinite(mpgEquiv)) {
+            display.innerText = mpgEquiv.toFixed(1);
+            
+            const diff = ((mpgEquiv - rogueMPG) / rogueMPG) * 100;
+            
+            if (diff > 0) {
+                badge.style.background = "#00ff88";
+                badge.innerText = `${diff.toFixed(0)}% MÁS EFICIENTE`;
+            } else {
+                badge.style.background = "#ff4b2b";
+                badge.innerText = `${Math.abs(diff).toFixed(0)}% MENOS EFICIENTE`;
+            }
+        }
+    }
+    update();
+</script>
+
+</body>
+</html>
