@@ -47,6 +47,7 @@
         h1 { font-size: 22px; font-weight: 700; margin: 0; }
         .subtitle { color: var(--text-dim); font-size: 13px; margin-top: 5px; }
 
+        /* --- TARJETA DE COMPARACIÓN --- */
         .comparison-card {
             background: var(--card);
             border-radius: 28px;
@@ -58,13 +59,13 @@
         .vehicle-grid {
             display: grid;
             grid-template-columns: 1fr 30px 1fr;
-            align-items: center; /* Asegura alineación central de los elementos */
+            align-items: center; 
             text-align: center;
         }
 
         .v-item img { 
             width: 100%; max-width: 120px; height: 75px; 
-            object-fit: contain; margin-bottom: 15px;
+            object-fit: contain; margin-bottom: 12px;
         }
 
         .badge-row { height: 45px; display: flex; align-items: center; justify-content: center; }
@@ -87,6 +88,7 @@
 
         .vs-divider { font-weight: 800; color: var(--tesla-blue); opacity: 0.6; padding-top: 5px; font-size: 14px; }
 
+        /* --- CONTROLES --- */
         .input-group { background: var(--card); border-radius: 24px; padding: 22px; margin-bottom: 15px; }
         .control { margin-bottom: 20px; }
         .label-row { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-dim); margin-bottom: 10px; text-transform: uppercase; }
@@ -100,17 +102,21 @@
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none; height: 22px; width: 22px; border-radius: 50%;
             background: var(--tesla-blue); border: 2px solid white; margin-top: -9px;
+            box-shadow: 0 0 10px rgba(62,100,255,0.3);
             transition: transform 0.2s ease;
         }
         input[type=range]:active::-webkit-slider-thumb { transform: scale(1.2); }
 
+        /* --- CUADRO DE AHORRO --- */
         .total-box {
             background: linear-gradient(180deg, #1c2128 0%, #161b22 100%);
             border-radius: 32px;
             padding: 35px 20px;
             text-align: center;
-            border: 1px solid rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.08); /* Borde inicial */
             box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            margin-top: 5px;
+            transition: border-color 0.4s ease;
         }
 
         .total-label { font-size: 13px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; }
@@ -156,16 +162,16 @@
 
     <div class="input-group">
         <div class="control">
-            <div class="label-row">Distancia <b id="distText">100 Mi</b></div>
-            <input type="range" id="dist" min="1" max="300" step="1" value="100" oninput="calc()">
+            <div class="label-row">Distancia <b id="distText">134 Mi</b></div>
+            <input type="range" id="dist" min="1" max="300" step="1" value="134" oninput="calc()">
         </div>
         <div class="control">
-            <div class="label-row">Precio Gasolina <b id="gPText">$2.81</b></div>
-            <input type="range" id="gP" min="1" max="4" step="0.01" value="2.81" oninput="calc()">
+            <div class="label-row">Precio Gasolina <b id="gPText">$2.51</b></div>
+            <input type="range" id="gP" min="1" max="4" step="0.01" value="2.51" oninput="calc()">
         </div>
         <div class="control">
-            <div class="label-row">Eficiencia Tesla <b id="eEText">0.250 kWh/mi</b></div>
-            <input type="range" id="eE" min="0.150" max="0.500" step="0.001" value="0.250" oninput="calc()">
+            <div class="label-row">Eficiencia Tesla <b id="eEText">0.235 kWh/mi</b></div>
+            <input type="range" id="eE" min="0.150" max="0.500" step="0.001" value="0.235" oninput="calc()">
         </div>
         <div class="control">
             <div class="label-row">MPG Auto Gas <b id="gMText">30 MPG</b></div>
@@ -237,17 +243,20 @@
 
         const displaySavings = document.getElementById('totalSavings');
         const label = document.getElementById('statusLabel');
+        const box = document.getElementById('resultBox');
 
         if (savings >= 0) {
             displaySavings.innerText = `$${savings.toFixed(2)}`;
             displaySavings.style.color = 'var(--tesla-green)';
             displaySavings.classList.add('saving-glow');
             label.innerText = "Ahorro Estimado";
+            box.style.borderColor = 'rgba(0, 255, 136, 0.3)';
         } else {
             displaySavings.innerText = `-$${Math.abs(savings).toFixed(2)}`;
             displaySavings.style.color = 'var(--tesla-red)';
             displaySavings.classList.remove('saving-glow');
             label.innerText = "Gasto Adicional";
+            box.style.borderColor = 'rgba(255, 69, 58, 0.3)';
         }
     }
     window.onload = calc;
