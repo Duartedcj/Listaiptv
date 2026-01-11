@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tesla vs Gas: Comparativa Final</title>
+    <title>Tesla vs Gas: Comparador Pro</title>
     <style>
         :root {
             --bg: #0d0f12;
             --card: #1c2128;
             --tesla-blue: #3e64ff;
-            --tesla-cyan: #00d2ff;
             --tesla-green: #00ff88;
             --tesla-yellow: #ffcc00;
             --tesla-red: #ff453a;
@@ -30,7 +29,7 @@
 
         header { text-align: center; margin-bottom: 20px; }
         h1 { font-size: 20px; font-weight: 700; margin: 0; }
-        .subtitle { color: var(--text-dim); font-size: 13px; margin-top: 5px; }
+        .subtitle { color: var(--text-dim); font-size: 12px; margin-top: 5px; }
 
         .comparison-card {
             background: var(--card);
@@ -47,58 +46,62 @@
             text-align: center;
         }
 
-        .v-item img { width: 100%; max-width: 120px; height: auto; display: block; margin: 0 auto; }
+        .v-item img { width: 100%; max-width: 110px; height: auto; display: block; margin: 0 auto; }
 
         .perf-badge {
             display: inline-block;
             margin-top: 10px;
-            padding: 6px 14px;
+            padding: 6px 12px;
             background: rgba(255,255,255,0.05);
             border-radius: 10px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 800;
             border: 1px solid transparent;
         }
 
-        .cost-label { font-size: 10px; text-transform: uppercase; color: var(--text-dim); margin-top: 10px; }
+        .cost-label { font-size: 10px; text-transform: uppercase; color: var(--text-dim); margin-top: 8px; }
 
         .input-group { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 15px; }
-        .control { margin-bottom: 20px; }
-        .label-row { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-dim); margin-bottom: 10px; text-transform: uppercase; }
-        .label-row b { color: white; font-size: 14px; }
+        .control { margin-bottom: 18px; }
+        .control:last-child { margin-bottom: 0; }
+        .label-row { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-dim); margin-bottom: 8px; text-transform: uppercase; }
+        .label-row b { color: white; font-size: 13px; }
 
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
         input[type=range]::-webkit-slider-runnable-track { height: 4px; background: #333; border-radius: 2px; }
         input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none; height: 22px; width: 22px; border-radius: 50%;
-            background: var(--tesla-blue); border: 2px solid white; margin-top: -9px;
+            -webkit-appearance: none; height: 20px; width: 20px; border-radius: 50%;
+            background: var(--tesla-blue); border: 2px solid white; margin-top: -8px;
         }
 
-        .grid-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
-        .mini-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 12px; }
+        .mini-box { 
+            background: rgba(255,255,255,0.03); 
+            border: 1px solid rgba(255,255,255,0.05); 
+            border-radius: 12px; 
+            padding: 12px;
+            margin-top: 10px;
+        }
         .mini-box label { font-size: 9px; color: var(--text-dim); display: block; margin-bottom: 5px; text-transform: uppercase; }
         .mini-box input { background: transparent; border: none; color: white; font-size: 16px; font-weight: 700; width: 100%; outline: none; }
 
         .total-box {
-            background: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.05) 100%);
+            background: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.04) 100%);
             border-radius: 28px;
-            padding: 30px;
+            padding: 25px;
             text-align: center;
             border: 1px solid rgba(255,255,255,0.1);
-            transition: all 0.4s ease;
         }
 
-        .total-label { font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
-        .total-val { font-size: 48px; font-weight: 800; margin: 10px 0; transition: color 0.3s; }
-        .total-desc { font-size: 13px; color: var(--text-dim); }
+        .total-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; }
+        .total-val { font-size: 42px; font-weight: 800; margin: 8px 0; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <h1>Comparativa de Ahorro</h1>
-        <div class="subtitle">Análisis Tesla vs Vehículos de Gasolina</div>
+        <h1>Ahorro por Sesión</h1>
+        <div class="subtitle">Tesla vs Vehículos de Combustión</div>
     </header>
 
     <div class="comparison-card">
@@ -119,12 +122,16 @@
 
     <div class="input-group">
         <div class="control">
-            <div class="label-row">Distancia del Trayecto <b id="distText">100 Mi</b></div>
-            <input type="range" id="dist" min="1" max="1000" step="1" value="100" oninput="calc()">
+            <div class="label-row">Distancia <b id="distText">100 Mi</b></div>
+            <input type="range" id="dist" min="1" max="500" step="1" value="100" oninput="calc()">
         </div>
         <div class="control">
             <div class="label-row">Precio Gasolina <b id="gPText">$2.81</b></div>
             <input type="range" id="gP" min="1" max="6" step="0.01" value="2.81" oninput="calc()">
+        </div>
+        <div class="control">
+            <div class="label-row">Eficiencia Tesla <b id="eEText">0.250 kWh/mi</b></div>
+            <input type="range" id="eE" min="150" max="500" step="1" value="250" oninput="calc()">
         </div>
         <div class="control">
             <div class="label-row">MPG Coche Gas <b id="gMText">30 MPG</b></div>
@@ -133,22 +140,16 @@
     </div>
 
     <div class="input-group">
-        <div class="grid-inputs">
-            <div class="mini-box">
-                <label>Precio kWh</label>
-                <input type="number" id="eP" value="0.34" step="0.01" oninput="calc()">
-            </div>
-            <div class="mini-box">
-                <label>kWh / Milla</label>
-                <input type="number" id="eE" value="0.250" step="0.001" oninput="calc()">
-            </div>
+        <div class="mini-box">
+            <label>Precio kWh (Supercharger / Casa)</label>
+            <input type="number" id="eP" value="0.34" step="0.01" oninput="calc()">
         </div>
     </div>
 
     <div class="total-box" id="resultBox">
         <div class="total-label" id="statusLabel">Dinero Ahorrado</div>
         <div class="total-val" id="totalSavings">$0.00</div>
-        <div class="total-desc" id="explanation">Frente a un vehículo de gasolina</div>
+        <div style="font-size: 12px; color: var(--text-dim);">Basado en esta sesión de manejo</div>
     </div>
 </div>
 
@@ -182,18 +183,18 @@
         const pG = parseFloat(document.getElementById('gP').value) || 0;
         const mG = parseFloat(document.getElementById('gM').value) || 1;
         const pE = parseFloat(document.getElementById('eP').value) || 0;
-        const eE = parseFloat(document.getElementById('eE').value) || 1;
+        const eEVal = parseFloat(document.getElementById('eE').value) / 1000; // Convierte Wh a kWh
 
-        const costEV = eE * pE;
+        const costEV = eEVal * pE;
         const costGas = pG / mG;
         const eqMPG = pG / costEV;
-        
-        // Comparación: Cuánto menos gasta el Tesla que el Gas
         const savings = (costGas - costEV) * dist;
 
         document.getElementById('distText').innerText = `${dist} Mi`;
         document.getElementById('gPText').innerText = `$${pG.toFixed(2)}`;
         document.getElementById('gMText').innerText = `${mG} MPG`;
+        document.getElementById('eEText').innerText = `${eEVal.toFixed(3)} kWh/mi`;
+        
         document.getElementById('evMilla').innerText = `$${costEV.toFixed(3)} /mi`;
         document.getElementById('gasMilla').innerText = `$${costGas.toFixed(3)} /mi`;
 
@@ -210,7 +211,6 @@
             box.style.borderColor = 'rgba(0, 255, 136, 0.3)';
             label.innerText = "Dinero Ahorrado";
         } else {
-            // Si el ahorro es negativo, mostramos el signo de menos
             displaySavings.innerText = `-$${Math.abs(savings).toFixed(2)}`;
             displaySavings.style.color = 'var(--tesla-red)';
             box.style.borderColor = 'rgba(255, 69, 58, 0.3)';
