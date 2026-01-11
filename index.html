@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tesla vs Gas: Costo por Milla</title>
+    <title>Tesla MPG Financiero</title>
     <style>
         :root {
             --bg: #0d0f12;
@@ -30,13 +30,13 @@
         h1 { font-size: 20px; font-weight: 700; margin: 0; }
         .subtitle { color: var(--text-dim); font-size: 13px; margin-top: 5px; }
 
-        /* --- COMPARATIVA DE AUTOS --- */
         .comparison-card {
             background: var(--card);
             border-radius: 24px;
-            padding: 20px;
+            padding: 25px;
             margin-bottom: 20px;
             border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
         .vehicle-grid {
@@ -48,36 +48,39 @@
 
         .v-item img { 
             width: 100%; 
-            max-width: 130px;
+            max-width: 120px;
             height: auto;
             display: block;
             margin: 0 auto;
         }
 
-        .vs-badge {
-            background: rgba(255,255,255,0.05);
-            padding: 5px 10px;
-            border-radius: 10px;
-            font-size: 12px;
+        .perf-badge {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 6px 12px;
+            background: rgba(0,255,136,0.1);
+            border-radius: 8px;
+            font-size: 16px;
             font-weight: 800;
-            color: var(--tesla-cyan);
+            color: var(--tesla-green);
+            border: 1px solid rgba(0,255,136,0.2);
         }
 
         .cost-label {
-            font-size: 11px;
+            font-size: 10px;
             text-transform: uppercase;
             color: var(--text-dim);
-            margin-top: 10px;
+            margin-top: 12px;
             letter-spacing: 0.5px;
         }
 
         .cost-value {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 700;
-            margin-top: 2px;
+            margin-top: 4px;
+            color: white;
         }
 
-        /* --- SELECTORES --- */
         .input-group {
             background: var(--card);
             border-radius: 20px;
@@ -86,12 +89,10 @@
         }
 
         .control { margin-bottom: 20px; }
-        .control:last-child { margin-bottom: 0; }
-
         .label-row {
             display: flex;
             justify-content: space-between;
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-dim);
             margin-bottom: 10px;
             text-transform: uppercase;
@@ -103,118 +104,117 @@
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none; height: 22px; width: 22px; border-radius: 50%;
             background: var(--tesla-blue); border: 2px solid white; margin-top: -9px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
 
-        .info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 15px;
-        }
+        .grid-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
+        .mini-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 12px; }
+        .mini-box label { font-size: 9px; color: var(--text-dim); display: block; margin-bottom: 5px; text-transform: uppercase; }
+        .mini-box input { background: transparent; border: none; color: white; font-size: 16px; font-weight: 700; width: 100%; outline: none; }
 
-        .info-box {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 12px;
-            padding: 10px;
-        }
-
-        .info-box label { font-size: 10px; color: var(--text-dim); display: block; margin-bottom: 4px; }
-        .info-box span { font-size: 15px; font-weight: 700; }
-
-        /* --- RESULTADO FINAL --- */
-        .total-box {
-            background: linear-gradient(180deg, rgba(62,100,255,0.1) 0%, rgba(0,255,136,0.05) 100%);
-            border-radius: 24px;
-            padding: 25px;
+        .result-footer {
             text-align: center;
-            border: 1px solid rgba(0,255,136,0.2);
+            padding: 15px;
+            font-size: 13px;
+            color: var(--text-dim);
+            line-height: 1.5;
         }
-
-        .total-label { font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
-        .total-val { font-size: 42px; font-weight: 800; color: var(--tesla-green); margin: 5px 0; }
+        .result-footer b { color: var(--tesla-cyan); }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <h1>Comparativa por Milla</h1>
-        <div class="subtitle">Gasto real: Gasolina vs Electricidad</div>
+        <h1>Equivalencia Real</h1>
+        <div class="subtitle">Tesla vs Gasolina: ¿Cuánto rinde tu dinero?</div>
     </header>
 
     <div class="comparison-card">
         <div class="vehicle-grid">
             <div class="v-item">
                 <img src="Teslam3.AVIF" alt="Tesla">
-                <div class="cost-label">Por Milla</div>
-                <div class="cost-value" id="evMilla">$0.00</div>
+                <div class="perf-badge" id="teslaEqMPG">33 MPG</div>
+                <div class="cost-label">Equivalencia</div>
+                <div class="cost-value" id="evMilla">$0.085</div>
             </div>
-            <div class="vs-badge">VS</div>
+            <div style="font-weight: 800; color: var(--text-dim); opacity: 0.3;">VS</div>
             <div class="v-item">
                 <img src="Gascar.png" alt="Gas Car">
-                <div class="cost-label">Por Milla</div>
-                <div class="cost-value" id="gasMilla">$0.00</div>
+                <div class="perf-badge" id="gasMPGDisplay">30 MPG</div>
+                <div class="cost-label">Rendimiento</div>
+                <div class="cost-value" id="gasMilla">$0.094</div>
             </div>
         </div>
     </div>
 
     <div class="input-group">
         <div class="control">
-            <div class="label-row">Precio Gasolina <b id="gPText">$2.81</b></div>
+            <div class="label-row">Precio Gasolina (Ref) <b id="gPText">$2.81</b></div>
             <input type="range" id="gP" min="1" max="6" step="0.01" value="2.81" oninput="calc()">
         </div>
         <div class="control">
-            <div class="label-row">Millas por Galón (MPG) <b id="gMText">30 MPG</b></div>
+            <div class="label-row">MPG Coche Gas <b id="gMText">30 MPG</b></div>
             <input type="range" id="gM" min="10" max="60" step="1" value="30" oninput="calc()">
         </div>
     </div>
 
     <div class="input-group">
-        <div class="info-grid">
-            <div class="info-box">
-                <label>COSTO kWh (Tesla)</label>
-                <span id="ePText">$0.34</span>
+        <div class="grid-inputs">
+            <div class="mini-box">
+                <label>Precio kWh</label>
+                <input type="number" id="eP" value="0.34" step="0.01" oninput="calc()">
             </div>
-            <div class="info-box">
-                <label>kWh POR MILLA</label>
-                <span id="eEText">0.250</span>
+            <div class="mini-box">
+                <label>Eficiencia (kWh/mi)</label>
+                <input type="number" id="eE" value="0.250" step="0.001" oninput="calc()">
             </div>
         </div>
     </div>
 
-    <div class="total-box">
-        <div class="total-label">Diferencia de ahorro</div>
-        <div class="total-val" id="resMilla">$0.00</div>
-        <div style="font-size: 12px; color: var(--text-dim);">Por cada milla recorrida</div>
+    <div class="result-footer" id="explanation">
+        Cargar a <b>$0.34/kWh</b> equivale a tener un auto de gasolina que rinde <b>33 MPG</b>.
     </div>
 </div>
 
 <script>
     function calc() {
-        const pG = parseFloat(document.getElementById('gP').value);
-        const mG = parseFloat(document.getElementById('gM').value);
+        const pG = parseFloat(document.getElementById('gP').value) || 0;
+        const mG = parseFloat(document.getElementById('gM').value) || 1;
+        const pE = parseFloat(document.getElementById('eP').value) || 0;
+        const eE = parseFloat(document.getElementById('eE').value) || 1;
+
+        // 1. Costo por milla en Tesla
+        const costPerMileTesla = eE * pE;
         
-        // Valores fijos del Tesla (puedes hacerlos variables si quieres)
-        const pE = 0.34; 
-        const eE = 0.250;
+        // 2. Costo por milla en Gas
+        const costPerMileGas = pG / mG;
 
-        document.getElementById('gPText').innerText = `$${pG.toFixed(2)}`;
-        document.getElementById('gMText').innerText = `${mG} MPG`;
-
-        // Cálculo por Milla
-        const costMillaGas = pG / mG;
-        const costMillaEV = pE * eE;
-        const ahorroPorMilla = costMillaGas - costMillaEV;
+        // 3. Equivalencia MPG para el Tesla: Precio Gasolina / Costo Milla Tesla
+        const eqMPG = pG / costPerMileTesla;
 
         // Actualizar UI
-        document.getElementById('gasMilla').innerText = `$${costMillaGas.toFixed(3)}`;
-        document.getElementById('evMilla').innerText = `$${costMillaEV.toFixed(3)}`;
-        document.getElementById('resMilla').innerText = `$${ahorroPorMilla.toFixed(3)}`;
+        document.getElementById('gPText').innerText = `$${pG.toFixed(2)}`;
+        document.getElementById('gMText').innerText = `${mG} MPG`;
+        
+        document.getElementById('evMilla').innerText = `$${costPerMileTesla.toFixed(3)} /mi`;
+        document.getElementById('gasMilla').innerText = `$${costPerMileGas.toFixed(3)} /mi`;
+        
+        document.getElementById('gasMPGDisplay').innerText = `${mG} MPG`;
+        document.getElementById('teslaEqMPG').innerText = `${Math.round(eqMPG)} MPG`;
 
-        // Color según resultado
-        document.getElementById('resMilla').style.color = ahorroPorMilla > 0 ? 'var(--tesla-green)' : '#ff453a';
+        // Explicación dinámica
+        document.getElementById('explanation').innerHTML = 
+            `Cargar a <b>$${pE.toFixed(2)}/kWh</b> equivale financieramente a conducir un auto de gasolina que rinde <b>${Math.round(eqMPG)} MPG</b> (con gasolina a $${pG.toFixed(2)}).`;
+        
+        // Color de éxito si el Tesla es más eficiente financieramente que el coche comparado
+        const badge = document.getElementById('teslaEqMPG');
+        if (eqMPG > mG) {
+            badge.style.color = 'var(--tesla-green)';
+            badge.style.background = 'rgba(0,255,136,0.1)';
+        } else {
+            badge.style.color = '#ff453a';
+            badge.style.background = 'rgba(255,69,58,0.1)';
+        }
     }
     window.onload = calc;
 </script>
