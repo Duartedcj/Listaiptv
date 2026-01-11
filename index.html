@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tesla vs Gas: Comparativa Real</title>
+    <title>Tesla vs Gas: Comparativa Final</title>
     <style>
         :root {
             --bg: #0d0f12;
@@ -47,10 +47,7 @@
             text-align: center;
         }
 
-        .v-item img { 
-            width: 100%; max-width: 120px; height: auto;
-            display: block; margin: 0 auto;
-        }
+        .v-item img { width: 100%; max-width: 120px; height: auto; display: block; margin: 0 auto; }
 
         .perf-badge {
             display: inline-block;
@@ -60,33 +57,14 @@
             border-radius: 10px;
             font-size: 16px;
             font-weight: 800;
-            transition: all 0.3s ease;
             border: 1px solid transparent;
         }
 
-        .cost-label {
-            font-size: 10px;
-            text-transform: uppercase;
-            color: var(--text-dim);
-            margin-top: 10px;
-        }
+        .cost-label { font-size: 10px; text-transform: uppercase; color: var(--text-dim); margin-top: 10px; }
 
-        .input-group {
-            background: var(--card);
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 15px;
-        }
-
+        .input-group { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 15px; }
         .control { margin-bottom: 20px; }
-        .label-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            color: var(--text-dim);
-            margin-bottom: 10px;
-            text-transform: uppercase;
-        }
+        .label-row { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-dim); margin-bottom: 10px; text-transform: uppercase; }
         .label-row b { color: white; font-size: 14px; }
 
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
@@ -102,15 +80,16 @@
         .mini-box input { background: transparent; border: none; color: white; font-size: 16px; font-weight: 700; width: 100%; outline: none; }
 
         .total-box {
-            background: linear-gradient(180deg, rgba(62,100,255,0.1) 0%, rgba(0,255,136,0.05) 100%);
+            background: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.05) 100%);
             border-radius: 28px;
             padding: 30px;
             text-align: center;
-            border: 1px solid rgba(0,255,136,0.2);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.4s ease;
         }
 
         .total-label { font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
-        .total-val { font-size: 48px; font-weight: 800; color: var(--tesla-green); margin: 10px 0; }
+        .total-val { font-size: 48px; font-weight: 800; margin: 10px 0; transition: color 0.3s; }
         .total-desc { font-size: 13px; color: var(--text-dim); }
     </style>
 </head>
@@ -118,8 +97,8 @@
 
 <div class="container">
     <header>
-        <h1>Ahorro Inteligente</h1>
-        <div class="subtitle">Análisis basado en MPG Financiero</div>
+        <h1>Comparativa de Ahorro</h1>
+        <div class="subtitle">Análisis Tesla vs Vehículos de Gasolina</div>
     </header>
 
     <div class="comparison-card">
@@ -140,7 +119,7 @@
 
     <div class="input-group">
         <div class="control">
-            <div class="label-row">Distancia <b id="distText">100 Mi</b></div>
+            <div class="label-row">Distancia del Trayecto <b id="distText">100 Mi</b></div>
             <input type="range" id="dist" min="1" max="1000" step="1" value="100" oninput="calc()">
         </div>
         <div class="control">
@@ -160,36 +139,33 @@
                 <input type="number" id="eP" value="0.34" step="0.01" oninput="calc()">
             </div>
             <div class="mini-box">
-                <label>Eficiencia (kWh/mi)</label>
+                <label>kWh / Milla</label>
                 <input type="number" id="eE" value="0.250" step="0.001" oninput="calc()">
             </div>
         </div>
     </div>
 
-    <div class="total-box">
-        <div class="total-label">Dinero Ahorrado</div>
+    <div class="total-box" id="resultBox">
+        <div class="total-label" id="statusLabel">Dinero Ahorrado</div>
         <div class="total-val" id="totalSavings">$0.00</div>
-        <div class="total-desc" id="explanation">Resultado del trayecto</div>
+        <div class="total-desc" id="explanation">Frente a un vehículo de gasolina</div>
     </div>
 </div>
 
 <script>
     function getStyle(val, type) {
-        let color, bg, border;
-        
+        let color;
         if (type === 'gas') {
             if (val >= 28) color = 'var(--tesla-green)';
             else if (val >= 24) color = 'var(--tesla-yellow)';
             else color = 'var(--tesla-red)';
-        } else { // Tesla
+        } else {
             if (val >= 33) color = 'var(--tesla-green)';
             else if (val >= 28) color = 'var(--tesla-yellow)';
             else color = 'var(--tesla-red)';
         }
-        
-        // Generar transparencia del color principal para el fondo
         const rgb = color === 'var(--tesla-green)' ? '0, 255, 136' : (color === 'var(--tesla-yellow)' ? '255, 204, 0' : '255, 69, 58');
-        return { color: color, bg: `rgba(${rgb}, 0.15)`, border: `rgba(${rgb}, 0.3)` };
+        return { color: color, bg: `rgba(${rgb}, 0.12)`, border: `rgba(${rgb}, 0.25)` };
     }
 
     function updateBadge(id, val, type) {
@@ -211,6 +187,8 @@
         const costEV = eE * pE;
         const costGas = pG / mG;
         const eqMPG = pG / costEV;
+        
+        // Comparación: Cuánto menos gasta el Tesla que el Gas
         const savings = (costGas - costEV) * dist;
 
         document.getElementById('distText').innerText = `${dist} Mi`;
@@ -222,8 +200,22 @@
         updateBadge('gasMPGDisplay', mG, 'gas');
         updateBadge('teslaEq', eqMPG, 'tesla');
 
-        document.getElementById('totalSavings').innerText = `$${Math.abs(savings).toFixed(2)}`;
-        document.getElementById('totalSavings').style.color = savings >= 0 ? 'var(--tesla-green)' : 'var(--tesla-red)';
+        const displaySavings = document.getElementById('totalSavings');
+        const box = document.getElementById('resultBox');
+        const label = document.getElementById('statusLabel');
+
+        if (savings >= 0) {
+            displaySavings.innerText = `$${savings.toFixed(2)}`;
+            displaySavings.style.color = 'var(--tesla-green)';
+            box.style.borderColor = 'rgba(0, 255, 136, 0.3)';
+            label.innerText = "Dinero Ahorrado";
+        } else {
+            // Si el ahorro es negativo, mostramos el signo de menos
+            displaySavings.innerText = `-$${Math.abs(savings).toFixed(2)}`;
+            displaySavings.style.color = 'var(--tesla-red)';
+            box.style.borderColor = 'rgba(255, 69, 58, 0.3)';
+            label.innerText = "Gasto Adicional";
+        }
     }
     window.onload = calc;
 </script>
