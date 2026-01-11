@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Tesla vs Gas: Comparativa Final</title>
+
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0d0f12">
+
     <style>
         :root {
             --bg: #0d0f12;
@@ -47,7 +55,6 @@
         h1 { font-size: 22px; font-weight: 700; margin: 0; }
         .subtitle { color: var(--text-dim); font-size: 13px; margin-top: 5px; }
 
-        /* --- TARJETA DE COMPARACIÓN --- */
         .comparison-card {
             background: var(--card);
             border-radius: 28px;
@@ -88,7 +95,6 @@
 
         .vs-divider { font-weight: 800; color: var(--tesla-blue); opacity: 0.6; padding-top: 5px; font-size: 14px; }
 
-        /* --- CONTROLES --- */
         .input-group { background: var(--card); border-radius: 24px; padding: 22px; margin-bottom: 15px; }
         .control { margin-bottom: 20px; }
         .label-row { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-dim); margin-bottom: 10px; text-transform: uppercase; }
@@ -107,13 +113,12 @@
         }
         input[type=range]:active::-webkit-slider-thumb { transform: scale(1.2); }
 
-        /* --- CUADRO DE AHORRO --- */
         .total-box {
             background: linear-gradient(180deg, #1c2128 0%, #161b22 100%);
             border-radius: 32px;
             padding: 35px 20px;
             text-align: center;
-            border: 1px solid rgba(255,255,255,0.08); /* Borde inicial */
+            border: 1px solid rgba(255,255,255,0.08);
             box-shadow: 0 15px 35px rgba(0,0,0,0.4);
             margin-top: 5px;
             transition: border-color 0.4s ease;
