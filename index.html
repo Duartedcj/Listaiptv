@@ -34,7 +34,6 @@
             display: flex;
             justify-content: center;
             padding: 20px;
-            overflow-x: hidden;
         }
 
         .container { 
@@ -44,7 +43,7 @@
         }
 
         header { text-align: center; margin-bottom: 20px; }
-        h1 { font-size: 22px; font-weight: 700; margin: 0; letter-spacing: -0.5px; }
+        h1 { font-size: 22px; font-weight: 700; margin: 0; }
         .subtitle { color: var(--text-dim); font-size: 13px; margin-top: 5px; }
 
         .comparison-card {
@@ -67,8 +66,6 @@
             object-fit: contain; margin-bottom: 12px;
             transition: transform 0.3s ease;
         }
-        
-        .v-item:hover img { transform: scale(1.05); }
 
         .badge-row { height: 45px; display: flex; align-items: center; justify-content: center; }
 
@@ -95,7 +92,7 @@
         .label-row { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-dim); margin-bottom: 10px; text-transform: uppercase; }
         .label-row b { 
             color: white; font-size: 14px; background: rgba(255,255,255,0.08); 
-            padding: 2px 10px; border-radius: 8px; transition: background 0.3s;
+            padding: 2px 10px; border-radius: 8px;
         }
 
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
@@ -104,7 +101,7 @@
             -webkit-appearance: none; height: 22px; width: 22px; border-radius: 50%;
             background: var(--tesla-blue); border: 2px solid white; margin-top: -9px;
             box-shadow: 0 0 10px rgba(62,100,255,0.3);
-            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: transform 0.2s ease;
         }
         input[type=range]:active::-webkit-slider-thumb { transform: scale(1.2); }
 
@@ -115,18 +112,14 @@
             text-align: center;
             border: 1px solid rgba(255,255,255,0.08);
             box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-            transition: border-color 0.5s ease;
         }
 
-        .total-label { font-size: 13px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; }
-        
         .total-val { 
             font-size: 54px; font-weight: 800; margin: 10px 0; 
-            transition: color 0.5s ease, transform 0.3s ease;
+            transition: color 0.5s ease;
         }
         
         .saving-glow { animation: glow 3s infinite ease-in-out; }
-
         .total-desc { font-size: 12px; color: var(--text-dim); opacity: 0.7; }
     </style>
 </head>
@@ -157,11 +150,11 @@
     <div class="input-group">
         <div class="control">
             <div class="label-row">Distancia <b id="distText">100 Mi</b></div>
-            <input type="range" id="dist" min="1" max="500" step="1" value="100" oninput="calc()">
+            <input type="range" id="dist" min="1" max="300" step="1" value="100" oninput="calc()">
         </div>
         <div class="control">
             <div class="label-row">Precio Gasolina <b id="gPText">$2.81</b></div>
-            <input type="range" id="gP" min="1" max="6" step="0.01" value="2.81" oninput="calc()">
+            <input type="range" id="gP" min="1" max="4" step="0.01" value="2.81" oninput="calc()">
         </div>
         <div class="control">
             <div class="label-row">Eficiencia Tesla <b id="eEText">0.250 kWh/mi</b></div>
@@ -178,9 +171,9 @@
     </div>
 
     <div class="total-box" id="resultBox">
-        <div class="total-label" id="statusLabel">Ahorro Estimado</div>
+        <div class="total-label" id="statusLabel" style="font-size: 13px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px;">Ahorro Estimado</div>
         <div class="total-val" id="totalSavings">$0.00</div>
-        <div class="total-desc">Basado en eficiencia energética actual</div>
+        <div class="total-desc">Diferencia financiera en este trayecto</div>
     </div>
 </div>
 
@@ -241,13 +234,11 @@
             displaySavings.innerText = `$${savings.toFixed(2)}`;
             displaySavings.style.color = 'var(--tesla-green)';
             displaySavings.classList.add('saving-glow');
-            box.style.borderColor = 'rgba(0, 255, 136, 0.2)';
             label.innerText = "Ahorro Estimado";
         } else {
             displaySavings.innerText = `-$${Math.abs(savings).toFixed(2)}`;
             displaySavings.style.color = 'var(--tesla-red)';
             displaySavings.classList.remove('saving-glow');
-            box.style.borderColor = 'rgba(255, 69, 58, 0.2)';
             label.innerText = "Gasto Adicional";
         }
     }
