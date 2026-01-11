@@ -21,9 +21,9 @@
         }
 
         @keyframes glow {
-            0% { text-shadow: 0 0 10px rgba(0,255,136,0.2); }
-            50% { text-shadow: 0 0 25px rgba(0,255,136,0.5); }
-            100% { text-shadow: 0 0 10px rgba(0,255,136,0.2); }
+            0% { text-shadow: 0 0 10px rgba(0,255,136,0.3); }
+            50% { text-shadow: 0 0 25px rgba(0,255,136,0.6); }
+            100% { text-shadow: 0 0 10px rgba(0,255,136,0.3); }
         }
 
         body {
@@ -32,7 +32,8 @@
             font-family: -apple-system, BlinkMacSystemFont, sans-serif;
             margin: 0;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            align-items: center;
             padding: 20px;
         }
 
@@ -46,7 +47,6 @@
         h1 { font-size: 22px; font-weight: 700; margin: 0; }
         .subtitle { color: var(--text-dim); font-size: 13px; margin-top: 5px; }
 
-        /* --- TARJETA DE COMPARACIÓN --- */
         .comparison-card {
             background: var(--card);
             border-radius: 28px;
@@ -58,14 +58,13 @@
         .vehicle-grid {
             display: grid;
             grid-template-columns: 1fr 30px 1fr;
-            align-items: start;
+            align-items: center; /* Asegura alineación central de los elementos */
             text-align: center;
         }
 
         .v-item img { 
             width: 100%; max-width: 120px; height: 75px; 
-            object-fit: contain; margin-bottom: 12px;
-            transition: transform 0.3s ease;
+            object-fit: contain; margin-bottom: 15px;
         }
 
         .badge-row { height: 45px; display: flex; align-items: center; justify-content: center; }
@@ -86,9 +85,8 @@
             color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px;
         }
 
-        .vs-divider { font-weight: 800; color: var(--tesla-blue); opacity: 0.6; padding-top: 30px; font-size: 14px; }
+        .vs-divider { font-weight: 800; color: var(--tesla-blue); opacity: 0.6; padding-top: 5px; font-size: 14px; }
 
-        /* --- CONTROLES --- */
         .input-group { background: var(--card); border-radius: 24px; padding: 22px; margin-bottom: 15px; }
         .control { margin-bottom: 20px; }
         .label-row { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-dim); margin-bottom: 10px; text-transform: uppercase; }
@@ -102,12 +100,10 @@
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none; height: 22px; width: 22px; border-radius: 50%;
             background: var(--tesla-blue); border: 2px solid white; margin-top: -9px;
-            box-shadow: 0 0 10px rgba(62,100,255,0.3);
             transition: transform 0.2s ease;
         }
         input[type=range]:active::-webkit-slider-thumb { transform: scale(1.2); }
 
-        /* --- CUADRO DE AHORRO (ESTILO ORIGINAL RESTAURADO) --- */
         .total-box {
             background: linear-gradient(180deg, #1c2128 0%, #161b22 100%);
             border-radius: 32px;
@@ -115,13 +111,23 @@
             text-align: center;
             border: 1px solid rgba(255,255,255,0.08);
             box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-            margin-top: 5px;
         }
 
         .total-label { font-size: 13px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; }
-        .total-val { font-size: 54px; font-weight: 800; margin: 10px 0; transition: color 0.5s ease; }
+        .total-val { font-size: 58px; font-weight: 800; margin: 10px 0; transition: color 0.5s ease; }
         .saving-glow { animation: glow 3s infinite ease-in-out; }
         .total-desc { font-size: 12px; color: var(--text-dim); opacity: 0.7; }
+
+        .footer-tag {
+            margin-top: 20px;
+            padding: 8px 20px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--text-dim);
+            border: 1px solid rgba(255,255,255,0.05);
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
@@ -129,7 +135,7 @@
 <div class="container">
     <header>
         <h1>Ahorro por Sesión</h1>
-        <div class="subtitle">Tesla vs Combustión</div>
+        <div class="subtitle">Tesla vs Vehículos de Combustión</div>
     </header>
 
     <div class="comparison-card">
@@ -174,9 +180,11 @@
     <div class="total-box" id="resultBox">
         <div class="total-label" id="statusLabel">Ahorro Estimado</div>
         <div class="total-val" id="totalSavings">$0.00</div>
-        <div class="total-desc">Diferencia financiera en este trayecto</div>
+        <div class="total-desc">Basado en eficiencia energética actual</div>
     </div>
 </div>
+
+<a href="https://duartedcj.github.io" class="footer-tag">duartedcj.github.io</a>
 
 <script>
     function getStyle(val, type) {
