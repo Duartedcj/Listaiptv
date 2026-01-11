@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EV Savings Premium</title>
+    <title>Tesla vs Gas: Comparación Directa</title>
     <style>
         :root {
             --bg: #0d0f12;
@@ -29,7 +29,6 @@
         h1 { font-size: 22px; font-weight: 700; margin: 0; letter-spacing: 0.5px; }
         .subtitle { color: #8b949e; font-size: 13px; margin-top: 5px; }
 
-        /* --- SECCIÓN DE VEHÍCULOS --- */
         .vehicle-card {
             background: linear-gradient(145deg, #1e2530, #161b22);
             border-radius: 24px;
@@ -37,38 +36,27 @@
             border: 1px solid rgba(255,255,255,0.05);
             box-shadow: 0 15px 35px rgba(0,0,0,0.6);
             margin-bottom: 20px;
-            position: relative;
         }
 
         .vehicle-display {
             display: flex;
             justify-content: space-around;
             align-items: center;
-            position: relative;
         }
 
-        .v-item { text-align: center; flex: 1; z-index: 2; }
+        .v-item { text-align: center; flex: 1; }
         
-        /* Efecto Glow mejorado para tu Tesla */
         .v-item img { 
             width: 120px; 
-            height: auto;
-            filter: drop-shadow(0 0 12px rgba(62,100,255,0.6)); /* Resplandor azul */
-            transition: transform 0.3s ease;
+            filter: drop-shadow(0 0 12px rgba(62,100,255,0.6));
             display: block;
             margin: 0 auto;
         }
 
-        .vs-text {
-            font-weight: 800;
-            color: var(--tesla-cyan);
-            font-size: 14px;
-            text-shadow: 0 0 10px rgba(0,210,255,0.5);
-        }
-
+        .vs-text { font-weight: 800; color: var(--tesla-cyan); font-size: 14px; text-shadow: 0 0 10px rgba(0,210,255,0.5); }
         .v-label { font-size: 10px; color: #8b949e; margin-top: 8px; font-weight: 600; text-transform: uppercase; }
+        .v-cost { font-size: 16px; font-weight: 700; margin-top: 5px; color: white; }
 
-        /* --- CONTROLES --- */
         .input-card {
             background: var(--card);
             border-radius: 20px;
@@ -93,93 +81,96 @@
         .box { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 12px; border: 1px solid rgba(255,255,255,0.05); }
         .box input { background: transparent; border: none; color: white; font-size: 16px; font-weight: 700; width: 100%; outline: none; }
 
-        /* --- CAJA DE RESULTADO --- */
         .result-box {
             background: linear-gradient(180deg, rgba(62,100,255,0.1) 0%, rgba(0,255,136,0.05) 100%);
             border-radius: 28px;
             padding: 35px;
             text-align: center;
             border: 1px solid rgba(62,100,255,0.2);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
         }
 
         .res-label { font-size: 11px; letter-spacing: 2px; color: #8b949e; text-transform: uppercase; margin-bottom: 5px; }
         .res-val { font-size: 52px; font-weight: 800; color: var(--tesla-green); margin: 10px 0; text-shadow: 0 0 25px rgba(0,255,136,0.5); }
-
-        .progress-bar { background: rgba(255,255,255,0.05); height: 10px; border-radius: 5px; margin: 20px 0; overflow: hidden; }
-        .fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--tesla-blue), var(--tesla-green)); transition: width 1s ease; }
+        .comparison-info { font-size: 13px; color: #8b949e; margin-top: 10px; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <h1>EV Savings Calculator</h1>
-        <div class="subtitle">Compare costs, drive smarter.</div>
+        <h1>Comparativa Monetaria</h1>
+        <div class="subtitle">Análisis de costo por sesión de manejo</div>
     </header>
 
     <div class="vehicle-card">
         <div class="vehicle-display">
             <div class="v-item">
-                <img src="Teslam3.AVIF" alt="Tesla Model 3">
-                <div class="v-label">Tesla Model 3</div>
+                <img src="Teslam3.AVIF" alt="Tesla">
+                <div class="v-label">Costo Tesla</div>
+                <div class="v-cost" id="evSessionCost">$0.00</div>
             </div>
             <div class="vs-text">VS</div>
             <div class="v-item">
-                <img src="Gascar.png" alt="Gas Car" style="filter: grayscale(0.5) brightness(0.8) drop-shadow(0 0 5px rgba(255,255,255,0.1));">
-                <div class="v-label">Gas Vehicle</div>
+                <img src="Gascar.png" alt="Gas Car" style="filter: grayscale(0.5) brightness(0.8);">
+                <div class="v-label">Costo Gasolina</div>
+                <div class="v-cost" id="gasSessionCost">$0.00</div>
             </div>
         </div>
     </div>
 
     <div class="input-card">
         <div class="control-row">
-            <div class="label-row">Gas Price <b id="gPT">$2.81</b></div>
-            <input type="range" id="gP" min="1" max="6" step="0.01" value="2.81" oninput="calc()">
+            <div class="label-row">Distancia del viaje <b id="distText">100 Mi</b></div>
+            <input type="range" id="dist" min="1" max="500" step="1" value="100" oninput="calc()">
         </div>
-        <div class="control-row">
-            <div class="label-row">Gas MPG <b id="gMT">30 MPG</b></div>
-            <input type="range" id="gM" min="10" max="60" step="1" value="30" oninput="calc()">
-        </div>
-        <div class="control-row">
-            <div class="label-row">Miles / Month <b id="miT">1,000</b></div>
-            <input type="range" id="mi" min="100" max="5000" step="100" value="1000" oninput="calc()">
-        </div>
+        
         <div class="grid-inputs">
-            <div class="box"><label style="font-size:10px; color:#8b949e; display:block; margin-bottom:5px;">$/kWh</label><input type="number" id="eP" value="0.34" oninput="calc()"></div>
-            <div class="box"><label style="font-size:10px; color:#8b949e; display:block; margin-bottom:5px;">kWh/mi</label><input type="number" id="eE" value="0.250" oninput="calc()"></div>
+            <div class="box"><label style="font-size:10px; color:#8b949e; display:block; margin-bottom:5px;">Precio Galón</label><input type="number" id="gP" value="2.81" oninput="calc()"></div>
+            <div class="box"><label style="font-size:10px; color:#8b949e; display:block; margin-bottom:5px;">MPG Auto</label><input type="number" id="gM" value="30" oninput="calc()"></div>
+        </div>
+        <div style="margin-top: 15px;" class="grid-inputs">
+            <div class="box"><label style="font-size:10px; color:#8b949e; display:block; margin-bottom:5px;">Precio kWh</label><input type="number" id="eP" value="0.34" oninput="calc()"></div>
+            <div class="box"><label style="font-size:10px; color:#8b949e; display:block; margin-bottom:5px;">Eficiencia Tesla</label><input type="number" id="eE" value="0.250" oninput="calc()"></div>
         </div>
     </div>
 
     <div class="result-box">
-        <div class="res-label">Ahorro Mensual</div>
+        <div class="res-label">Diferencia en este viaje</div>
         <div class="res-val" id="res">$0.00</div>
-        <div class="progress-bar"><div class="fill" id="bar"></div></div>
-        <div style="font-size: 13px; color: #8b949e;">Efficiency: <b id="pct" style="color:var(--tesla-cyan)">0%</b> better</div>
+        <div class="comparison-info" id="comparisonDetail">Tesla es un 0% más barato</div>
     </div>
 </div>
 
 <script>
     function calc() {
+        const dist = parseFloat(document.getElementById('dist').value);
         const pG = parseFloat(document.getElementById('gP').value);
         const mG = parseFloat(document.getElementById('gM').value);
-        const mi = parseFloat(document.getElementById('mi').value);
         const pE = parseFloat(document.getElementById('eP').value);
         const eE = parseFloat(document.getElementById('eE').value);
 
-        document.getElementById('gPT').innerText = `$${pG.toFixed(2)}`;
-        document.getElementById('gMT').innerText = `${mG} MPG`;
-        document.getElementById('miT').innerText = mi.toLocaleString();
+        document.getElementById('distText').innerText = `${dist} Mi`;
 
-        const costG = (pG / mG) * mi;
-        const costE = (pE * eE) * mi;
-        const savings = costG - costE;
-        const pct = ((costG - costE) / costG) * 100;
+        // Lógica de sesión/viaje
+        const costGas = (pG / mG) * dist;
+        const costTesla = (pE * eE) * dist;
+        const savings = costGas - costTesla;
+        const pct = ((costGas - costTesla) / costGas) * 100;
 
-        document.getElementById('res').innerText = `$${Math.max(0, savings).toFixed(2)}`;
-        document.getElementById('bar').style.width = `${Math.min(100, Math.max(0, pct))}%`;
-        document.getElementById('pct').innerText = `${Math.round(Math.max(0, pct))}%`;
+        // Actualizar costos individuales sobre los autos
+        document.getElementById('gasSessionCost').innerText = `$${costGas.toFixed(2)}`;
+        document.getElementById('evSessionCost').innerText = `$${costTesla.toFixed(2)}`;
+
+        // Resultado principal
+        document.getElementById('res').innerText = `$${Math.abs(savings).toFixed(2)}`;
         document.getElementById('res').style.color = savings > 0 ? 'var(--tesla-green)' : '#ff453a';
+        
+        const detail = document.getElementById('comparisonDetail');
+        if (savings > 0) {
+            detail.innerText = `Tesla es un ${Math.round(pct)}% más económico en este viaje`;
+        } else {
+            detail.innerText = `La gasolina es un ${Math.round(Math.abs(pct))}% más económica aquí`;
+        }
     }
     window.onload = calc;
 </script>
