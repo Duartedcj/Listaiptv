@@ -3,215 +3,487 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fuel-to-EV Pro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>EV Savings Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #3e64ff;
-            --accent: #00d2ff;
-            --bg: #0f1218;
-            --card: #1c222d;
-            --text: #ffffff;
-            --success: #00ff88;
+            --primary-blue: #3E64FF;
+            --accent-green: #00FF88;
+            --dark-bg: #111418;
+            --dark-card: #1c222d;
+            --text-light: #f0f4f8;
+            --text-grey: #8a96a3;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --gradient-card: linear-gradient(145deg, rgba(28, 34, 45, 0.9) 0%, rgba(35, 42, 53, 0.95) 100%);
         }
 
         body {
-            margin: 0;
             font-family: 'Inter', sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
+            background-color: var(--dark-bg);
+            color: var(--text-light);
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start; /* Align to top for better scrolling on mobile */
             min-height: 100vh;
+            padding: 30px 20px;
+            box-sizing: border-box;
             overflow-x: hidden;
         }
 
-        /* Animación de fondo */
-        body::before {
-            content: "";
-            position: absolute;
-            width: 300px; height: 300px;
-            background: var(--primary);
-            filter: blur(150px);
-            border-radius: 50%;
-            z-index: -1;
-            top: 10%; left: 10%;
-            animation: move 10s infinite alternate;
-        }
-
-        @keyframes move {
-            from { transform: translate(0, 0); }
-            to { transform: translate(100px, 50px); }
-        }
-
-        .card {
-            background: rgba(28, 34, 45, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 30px;
-            border-radius: 24px;
-            width: 100%;
-            max-width: 380px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            animation: fadeIn 0.8s ease-out;
-        }
-
+        /* --- Global Animations --- */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        h1 {
-            font-weight: 600;
-            font-size: 1.5rem;
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.03); opacity: 0.9; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 420px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
             margin-bottom: 5px;
-            text-align: center;
-            background: linear-gradient(to right, #fff, #888);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--text-light);
+        }
+        .header p {
+            font-size: 0.9rem;
+            color: var(--text-grey);
+            font-weight: 400;
         }
 
-        p.subtitle {
-            text-align: center;
-            color: #888;
-            font-size: 0.8rem;
-            margin-bottom: 25px;
+        .card {
+            background: var(--gradient-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
         }
 
+        /* --- Vehicle Selector --- */
+        .vehicle-selector {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .vehicle-option {
+            flex: 1;
+            text-align: center;
+            cursor: pointer;
+            padding: 15px 10px;
+            border-radius: 12px;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            background: rgba(255,255,255,0.03);
+        }
+        .vehicle-option:hover {
+            border-color: rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.05);
+        }
+        .vehicle-option.active {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 2px var(--primary-blue), 0 0 15px rgba(62, 100, 255, 0.4);
+            background: rgba(62, 100, 255, 0.1);
+        }
+        .vehicle-option img {
+            width: 90%;
+            max-width: 150px;
+            height: auto;
+            display: block;
+            margin: 0 auto 8px;
+            transition: transform 0.3s ease;
+        }
+        .vehicle-option.active img {
+            transform: scale(1.05);
+        }
+        .vehicle-option span {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-light);
+        }
+        .vs-text {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-grey);
+            padding: 0 10px;
+        }
+
+        /* --- Input Group --- */
         .input-group {
             margin-bottom: 20px;
         }
-
-        label {
-            display: block;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #aaa;
-            margin-bottom: 8px;
-        }
-
-        input {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 12px 15px;
-            border-radius: 12px;
-            color: white;
-            font-size: 1rem;
-            transition: all 0.3s;
-            outline: none;
-        }
-
-        input:focus {
-            border-color: var(--primary);
-            background: rgba(255, 255, 255, 0.1);
-            box-shadow: 0 0 15px rgba(62, 100, 255, 0.3);
-        }
-
-        .result-container {
-            background: linear-gradient(135deg, rgba(62, 100, 255, 0.1), rgba(0, 210, 255, 0.1));
-            padding: 20px;
-            border-radius: 18px;
-            text-align: center;
-            margin-top: 10px;
-            border: 1px solid rgba(62, 100, 255, 0.2);
-        }
-
-        .result-val {
-            font-size: 2.5rem;
-            font-weight: 600;
-            display: block;
-            color: var(--success);
-            text-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
-        }
-
-        .savings-badge {
-            display: inline-block;
-            background: var(--success);
-            color: #000;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: bold;
-            margin-top: 10px;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        .footer-info {
-            margin-top: 20px;
+        .input-group label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             font-size: 0.8rem;
-            color: #666;
-            text-align: center;
+            color: var(--text-grey);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
+        .input-group label span {
+            font-weight: 600;
+            color: var(--text-light);
+        }
+        .input-field {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: border-color 0.3s ease;
+        }
+        .input-field:focus-within {
+            border-color: var(--primary-blue);
+        }
+        .input-field input {
+            flex-grow: 1;
+            background: transparent;
+            border: none;
+            padding: 12px 15px;
+            color: var(--text-light);
+            font-size: 1rem;
+            outline: none;
+            -moz-appearance: textfield; /* Firefox */
+        }
+        .input-field input::-webkit-outer-spin-button,
+        .input-field input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .input-field .unit {
+            padding: 12px 15px;
+            color: var(--text-grey);
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* --- Result Section --- */
+        .result-card {
+            background: var(--gradient-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.8s ease-out;
+        }
+        .result-card h3 {
+            font-size: 1rem;
+            color: var(--text-grey);
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+        .saving-amount {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--accent-green);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-shadow: 0 0 25px rgba(0, 255, 136, 0.4);
+        }
+        .saving-amount .currency {
+            font-size: 1.5rem;
+            vertical-align: super;
+            margin-right: 5px;
+        }
+        .saving-description {
+            font-size: 0.9rem;
+            color: var(--text-grey);
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        /* --- Progress Bar --- */
+        .progress-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            height: 12px;
+            width: 100%;
+            overflow: hidden;
+            margin-top: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #3E64FF, #00D2FF);
+            border-radius: 10px;
+            transition: width 0.8s ease-out; /* Animación de la barra */
+        }
+        .progress-label {
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: var(--text-grey);
+            font-weight: 500;
+        }
+        
+        /* --- Tooltip (for sliders) --- */
+        .slider-group {
+            margin-bottom: 20px;
+        }
+        .slider-wrapper {
+            position: relative;
+            width: 100%;
+            height: 30px;
+            display: flex;
+            align-items: center;
+        }
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            outline: none;
+            transition: background 0.2s ease-in-out;
+            cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: var(--primary-blue);
+            border: 3px solid #fff;
+            cursor: grab;
+            box-shadow: 0 0 10px rgba(62, 100, 255, 0.6);
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+        input[type="range"]::-webkit-slider-thumb:active {
+            cursor: grabbing;
+            background: var(--accent-green);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.8);
+        }
+        .slider-value {
+            position: absolute;
+            top: -35px;
+            background: var(--primary-blue);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            white-space: nowrap;
+            transform: translateX(-50%);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s, transform 0.2s;
+            z-index: 10;
+        }
+        input[type="range"]:hover + .slider-value,
+        input[type="range"]:active + .slider-value {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-5px);
+        }
+        .input-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.8rem;
+            color: var(--text-grey);
+        }
+        .input-labels span:last-child {
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h1>Energy Calc</h1>
-    <p class="subtitle">Equivalencia Tesla vs Rogue</p>
-    
-    <div class="input-group">
-        <label>Precio Gasolina (GAL)</label>
-        <input type="number" id="gasPrice" value="2.81" step="0.01" oninput="update()">
+<div class="container">
+    <div class="header">
+        <h1>EV Savings Calculator</h1>
+        <p>Compare cost per mile, drive smarter.</p>
     </div>
 
-    <div class="input-group">
-        <label>Costo Supercharger (kWh)</label>
-        <input type="number" id="kwhPrice" value="0.34" step="0.01" oninput="update()">
+    <div class="card">
+        <div class="vehicle-selector">
+            <div class="vehicle-option active" id="teslaOption">
+                <img src="https://assets.tesla.com/tesla-properties-api/image/fetch?url=https://www.tesla.com/sites/default/files/model_3_hero_desktop.jpg" alt="Tesla Model 3">
+                <span>Tesla EV</span>
+            </div>
+            <span class="vs-text">VS</span>
+            <div class="vehicle-option" id="gasCarOption">
+                <img src="https://platform.cstatic-images.com/xlarge/in/v2/stock_images/85c8b56f-e3c7-43f1-b1e7-fb114ef974b7/b600a944-93e8-4674-8176-13d81b356d29.png" alt="Generic Gas Car">
+                <span>Your Gas Car</span>
+            </div>
+        </div>
     </div>
 
-    <div class="input-group">
-        <label>Eficiencia Tesla (kWh/mi)</label>
-        <input type="number" id="teslaCons" value="0.250" step="0.001" oninput="update()">
+    <div class="card">
+        <div class="input-group">
+            <label for="gasPrice">Precio del Galón de Gasolina</label>
+            <div class="input-field">
+                <input type="number" id="gasPrice" value="2.81" step="0.01" oninput="updateCalculation()">
+                <span class="unit">$/GAL</span>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label for="gasMPG">Rendimiento Coche Gasolina</label>
+            <div class="input-field">
+                <input type="number" id="gasMPG" value="30" step="1" oninput="updateCalculation()">
+                <span class="unit">MPG</span>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label for="evPrice">Costo de Carga EV</label>
+            <div class="input-field">
+                <input type="number" id="evPrice" value="0.34" step="0.01" oninput="updateCalculation()">
+                <span class="unit">$/kWh</span>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label for="evEfficiency">Eficiencia de tu EV</label>
+            <div class="input-field">
+                <input type="number" id="evEfficiency" value="0.250" step="0.001" oninput="updateCalculation()">
+                <span class="unit">kWh/milla</span>
+            </div>
+        </div>
+
+        <div class="slider-group">
+            <div class="input-labels">
+                <span>Millas Recorridas (Mes)</span>
+                <span id="milesLabel">1000 millas</span>
+            </div>
+            <div class="slider-wrapper">
+                <input type="range" id="milesPerMonth" min="100" max="5000" value="1000" step="100" oninput="updateCalculation(); updateMilesLabel()">
+                <div class="slider-value" id="milesTooltip">1000</div>
+            </div>
+        </div>
     </div>
 
-    <div class="result-container">
-        <span style="font-size: 0.8rem; color: #aaa;">EQUIVALENCIA ECONÓMICA</span>
-        <span class="result-val" id="mpgResult">33.0</span>
-        <span style="font-size: 0.9rem; font-weight: 600;">MPG</span>
-        <div id="badge" class="savings-badge">10% MEJOR QUE ROGUE</div>
+    <div class="result-card">
+        <h3>Ahorro Estimado al Mes</h3>
+        <div class="saving-amount">
+            <span class="currency">$</span>
+            <span id="monthlySavings">0.00</span>
+        </div>
+        <p class="saving-description" id="savingDescription">Calculando tu potencial de ahorro...</p>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <p class="progress-label" id="progressText">0% más eficiente</p>
     </div>
 
-    <div class="footer-info">
-        Basado en el rendimiento de tu Rogue (30 MPG)
-    </div>
 </div>
 
 <script>
-    function update() {
-        const gas = parseFloat(document.getElementById('gasPrice').value) || 0;
-        const kwh = parseFloat(document.getElementById('kwhPrice').value) || 0;
-        const cons = parseFloat(document.getElementById('teslaCons').value) || 0;
-        const rogueMPG = 30;
+    function updateMilesLabel() {
+        const miles = document.getElementById('milesPerMonth').value;
+        document.getElementById('milesLabel').innerText = `${miles} millas`;
+        document.getElementById('milesTooltip').innerText = miles;
+        const slider = document.getElementById('milesPerMonth');
+        const tooltip = document.getElementById('milesTooltip');
+        const thumbWidth = 25; // Ancho del 'thumb' del slider
+        const railWidth = slider.offsetWidth - thumbWidth;
+        const value = (slider.value - slider.min) / (slider.max - slider.min);
+        const position = value * railWidth + (thumbWidth / 2);
+        tooltip.style.left = `${position}px`;
+    }
 
-        const mpgEquiv = gas / (cons * kwh);
-        const display = document.getElementById('mpgResult');
-        const badge = document.getElementById('badge');
+    function updateCalculation() {
+        const gasPrice = parseFloat(document.getElementById('gasPrice').value);
+        const gasMPG = parseFloat(document.getElementById('gasMPG').value);
+        const evPrice = parseFloat(document.getElementById('evPrice').value);
+        const evEfficiency = parseFloat(document.getElementById('evEfficiency').value);
+        const milesPerMonth = parseInt(document.getElementById('milesPerMonth').value);
 
-        if (isFinite(mpgEquiv)) {
-            display.innerText = mpgEquiv.toFixed(1);
-            
-            const diff = ((mpgEquiv - rogueMPG) / rogueMPG) * 100;
-            
-            if (diff > 0) {
-                badge.style.background = "#00ff88";
-                badge.innerText = `${diff.toFixed(0)}% MÁS EFICIENTE`;
-            } else {
-                badge.style.background = "#ff4b2b";
-                badge.innerText = `${Math.abs(diff).toFixed(0)}% MENOS EFICIENTE`;
-            }
+        let costPerMileGas = 0;
+        if (gasPrice > 0 && gasMPG > 0) {
+            costPerMileGas = gasPrice / gasMPG;
+        }
+
+        let costPerMileEV = 0;
+        if (evPrice > 0 && evEfficiency > 0) {
+            costPerMileEV = evPrice * evEfficiency;
+        }
+
+        const monthlyCostGas = costPerMileGas * milesPerMonth;
+        const monthlyCostEV = costPerMileEV * milesPerMonth;
+        const monthlySavings = monthlyCostGas - monthlyCostEV;
+
+        document.getElementById('monthlySavings').innerText = monthlySavings.toFixed(2);
+
+        const savingDescription = document.getElementById('savingDescription');
+        if (monthlySavings > 0) {
+            savingDescription.innerText = `Estás ahorrando ${monthlySavings.toFixed(2)}$ cada mes al elegir el EV.`;
+            document.getElementById('monthlySavings').style.color = 'var(--accent-green)';
+        } else if (monthlySavings < 0) {
+            savingDescription.innerText = `El EV te está costando ${Math.abs(monthlySavings).toFixed(2)}$ más cada mes.`;
+            document.getElementById('monthlySavings').style.color = '#ff4b2b'; /* Rojo para costo extra */
+        } else {
+            savingDescription.innerText = `Los costos son iguales.`;
+            document.getElementById('monthlySavings').style.color = 'var(--text-light)';
+        }
+
+        // Update progress bar and text
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+        
+        let efficiencyDifference = 0; // % EV es más eficiente
+        if (costPerMileGas > 0) {
+            efficiencyDifference = ((costPerMileGas - costPerMileEV) / costPerMileGas) * 100;
+        }
+
+        let progressWidth = Math.max(0, Math.min(100, efficiencyDifference)); // Clamp between 0 and 100
+        progressBar.style.width = `${progressWidth}%`;
+
+        if (efficiencyDifference > 0) {
+            progressText.innerText = `${efficiencyDifference.toFixed(0)}% más eficiente que un coche de gasolina.`;
+            progressText.style.color = 'var(--accent-green)';
+            progressBar.style.background = 'linear-gradient(90deg, #3E64FF, #00D2FF)';
+        } else if (efficiencyDifference < 0) {
+            progressText.innerText = `${Math.abs(efficiencyDifference).toFixed(0)}% menos eficiente que un coche de gasolina.`;
+            progressText.style.color = '#ff4b2b';
+            progressBar.style.background = 'linear-gradient(90deg, #ff4b2b, #e67e22)'; /* Gradiente rojo/naranja */
+        } else {
+            progressText.innerText = `Eficiencia similar en costos.`;
+            progressText.style.color = 'var(--text-grey)';
+            progressBar.style.background = 'rgba(255, 255, 255, 0.2)';
         }
     }
-    update();
+
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', () => {
+        updateMilesLabel();
+        updateCalculation();
+    });
 </script>
 
 </body>
