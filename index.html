@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tesla vs Gas: Eficiencia Visual</title>
+    <title>Tesla vs Gas: Comparativa Real</title>
     <style>
         :root {
             --bg: #0d0f12;
@@ -32,7 +32,6 @@
         h1 { font-size: 20px; font-weight: 700; margin: 0; }
         .subtitle { color: var(--text-dim); font-size: 13px; margin-top: 5px; }
 
-        /* --- COMPARATIVA --- */
         .comparison-card {
             background: var(--card);
             border-radius: 24px;
@@ -72,7 +71,6 @@
             margin-top: 10px;
         }
 
-        /* --- SELECTORES --- */
         .input-group {
             background: var(--card);
             border-radius: 20px;
@@ -81,8 +79,6 @@
         }
 
         .control { margin-bottom: 20px; }
-        .control:last-child { margin-bottom: 0; }
-
         .label-row {
             display: flex;
             justify-content: space-between;
@@ -105,14 +101,12 @@
         .mini-box label { font-size: 9px; color: var(--text-dim); display: block; margin-bottom: 5px; text-transform: uppercase; }
         .mini-box input { background: transparent; border: none; color: white; font-size: 16px; font-weight: 700; width: 100%; outline: none; }
 
-        /* --- CUADRO DE ÉNFASIS (AHORRO TOTAL) --- */
         .total-box {
             background: linear-gradient(180deg, rgba(62,100,255,0.1) 0%, rgba(0,255,136,0.05) 100%);
             border-radius: 28px;
             padding: 30px;
             text-align: center;
             border: 1px solid rgba(0,255,136,0.2);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
         }
 
         .total-label { font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
@@ -124,8 +118,8 @@
 
 <div class="container">
     <header>
-        <h1>Comparativa Pro</h1>
-        <div class="subtitle">Análisis de eficiencia monetaria</div>
+        <h1>Ahorro Inteligente</h1>
+        <div class="subtitle">Análisis basado en MPG Financiero</div>
     </header>
 
     <div class="comparison-card">
@@ -166,7 +160,7 @@
                 <input type="number" id="eP" value="0.34" step="0.01" oninput="calc()">
             </div>
             <div class="mini-box">
-                <label>kWh / Milla</label>
+                <label>Eficiencia (kWh/mi)</label>
                 <input type="number" id="eE" value="0.250" step="0.001" oninput="calc()">
             </div>
         </div>
@@ -175,24 +169,36 @@
     <div class="total-box">
         <div class="total-label">Dinero Ahorrado</div>
         <div class="total-val" id="totalSavings">$0.00</div>
-        <div class="total-desc" id="explanation">En este trayecto</div>
+        <div class="total-desc" id="explanation">Resultado del trayecto</div>
     </div>
 </div>
 
 <script>
-    function getBadgeStyle(mpg) {
-        if (mpg >= 50) return { color: 'var(--tesla-green)', bg: 'rgba(0, 255, 136, 0.15)', border: 'rgba(0, 255, 136, 0.3)' };
-        if (mpg >= 25) return { color: 'var(--tesla-yellow)', bg: 'rgba(255, 204, 0, 0.15)', border: 'rgba(255, 204, 0, 0.3)' };
-        return { color: 'var(--tesla-red)', bg: 'rgba(255, 69, 58, 0.15)', border: 'rgba(255, 69, 58, 0.3)' };
+    function getStyle(val, type) {
+        let color, bg, border;
+        
+        if (type === 'gas') {
+            if (val >= 28) color = 'var(--tesla-green)';
+            else if (val >= 24) color = 'var(--tesla-yellow)';
+            else color = 'var(--tesla-red)';
+        } else { // Tesla
+            if (val >= 33) color = 'var(--tesla-green)';
+            else if (val >= 28) color = 'var(--tesla-yellow)';
+            else color = 'var(--tesla-red)';
+        }
+        
+        // Generar transparencia del color principal para el fondo
+        const rgb = color === 'var(--tesla-green)' ? '0, 255, 136' : (color === 'var(--tesla-yellow)' ? '255, 204, 0' : '255, 69, 58');
+        return { color: color, bg: `rgba(${rgb}, 0.15)`, border: `rgba(${rgb}, 0.3)` };
     }
 
-    function updateBadge(id, mpg) {
+    function updateBadge(id, val, type) {
         const badge = document.getElementById(id);
-        const style = getBadgeStyle(mpg);
-        badge.innerText = `${Math.round(mpg)} MPG`;
-        badge.style.color = style.color;
-        badge.style.backgroundColor = style.bg;
-        badge.style.borderColor = style.border;
+        const s = getStyle(val, type);
+        badge.innerText = `${Math.round(val)} MPG`;
+        badge.style.color = s.color;
+        badge.style.backgroundColor = s.bg;
+        badge.style.borderColor = s.border;
     }
 
     function calc() {
@@ -207,20 +213,16 @@
         const eqMPG = pG / costEV;
         const savings = (costGas - costEV) * dist;
 
-        // Actualizar Textos
         document.getElementById('distText').innerText = `${dist} Mi`;
         document.getElementById('gPText').innerText = `$${pG.toFixed(2)}`;
         document.getElementById('gMText').innerText = `${mG} MPG`;
         document.getElementById('evMilla').innerText = `$${costEV.toFixed(3)} /mi`;
         document.getElementById('gasMilla').innerText = `$${costGas.toFixed(3)} /mi`;
 
-        // Actualizar Badges con Rangos de Colores
-        updateBadge('gasMPGDisplay', mG);
-        updateBadge('teslaEq', eqMPG);
+        updateBadge('gasMPGDisplay', mG, 'gas');
+        updateBadge('teslaEq', eqMPG, 'tesla');
 
-        // Ahorro Total
         document.getElementById('totalSavings').innerText = `$${Math.abs(savings).toFixed(2)}`;
-        document.getElementById('explanation').innerText = `Diferencia en un viaje de ${dist} millas`;
         document.getElementById('totalSavings').style.color = savings >= 0 ? 'var(--tesla-green)' : 'var(--tesla-red)';
     }
     window.onload = calc;
